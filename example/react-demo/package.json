@@ -1,0 +1,26 @@
+{
+  "name": "react-demo",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "vite build",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src vite.config.ts",
+    "clean": "rm -rf dist node_modules/.vite"
+  },
+  "dependencies": {
+    "@permission-kit/core": "workspace:*",
+    "@permission-kit/react": "workspace:*",
+    "@permission-kit/vite-plugin": "workspace:*",
+    "@vitejs/plugin-react": "latest",
+    "vite": "latest",
+    "react": "latest",
+    "react-dom": "latest"
+  },
+  "devDependencies": {
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "typescript": "latest"
+  }
+}

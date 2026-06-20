@@ -1,0 +1,12 @@
+{
+  "extends": "./config/tsconfig/base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "ignoreDeprecations": "6.0",
+    "paths": {
+      "@permission-kit/core": ["packages/core/src"],
+      "@permission-kit/react": ["packages/react/src"],
+      "@permission-kit/vite-plugin": ["packages/vite-plugin/src"]
+    }
+  }
+}
