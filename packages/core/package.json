@@ -1,5 +1,5 @@
 {
-  "name": "@permission-kit/core",
+  "name": "@eycraf/permission-kit-core",
   "version": "0.0.1",
   "type": "module",
   "sideEffects": false,
@@ -21,6 +21,9 @@
   "files": [
     "dist"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",

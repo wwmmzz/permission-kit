@@ -10,9 +10,9 @@
     "clean": "rm -rf dist node_modules/.vite"
   },
   "dependencies": {
-    "@permission-kit/core": "workspace:*",
-    "@permission-kit/react": "workspace:*",
-    "@permission-kit/vite-plugin": "workspace:*",
+    "@eycraf/permission-kit-core": "workspace:*",
+    "@eycraf/permission-kit-react": "workspace:*",
+    "@eycraf/permission-kit-vite-plugin": "workspace:*",
     "@vitejs/plugin-react": "latest",
     "react": "latest",
     "react-dom": "latest",

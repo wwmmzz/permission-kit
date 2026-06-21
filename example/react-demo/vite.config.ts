@@ -10,9 +10,12 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 export default defineConfig({
   resolve: {
     alias: {
-      '@permission-kit/core': path.resolve(__dirname, '../../packages/core/src'),
-      '@permission-kit/react': path.resolve(__dirname, '../../packages/react/src'),
-      '@permission-kit/vite-plugin': path.resolve(__dirname, '../../packages/vite-plugin/src')
+      '@eycraf/permission-kit-core': path.resolve(__dirname, '../../packages/core/src'),
+      '@eycraf/permission-kit-react': path.resolve(__dirname, '../../packages/react/src'),
+      '@eycraf/permission-kit-vite-plugin': path.resolve(
+        __dirname,
+        '../../packages/vite-plugin/src'
+      )
     }
   },
   plugins: [
@@ -20,7 +23,7 @@ export default defineConfig({
     permission({
       framework: 'react',
       componentName: 'Can',
-      importFrom: '@permission-kit/react',
+      importFrom: '@eycraf/permission-kit-react',
       include: ['src/**/*.{ts,tsx,jsx}'],
       exclude: ['**/node_modules/**', '**/dist/**', '**/*.test.*', '**/*.spec.*', '**/*.stories.*'],
       transform: {

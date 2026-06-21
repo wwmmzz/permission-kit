@@ -1,4 +1,4 @@
-# @permission-kit/react
+# @eycraf/permission-kit-react
 
 ## 0.0.1
 
@@ -6,4 +6,4 @@
 
 - b5b35a9: init
 - Updated dependencies [b5b35a9]
-  - @permission-kit/core@0.0.1
+  - @eycraf/permission-kit-core@0.0.1

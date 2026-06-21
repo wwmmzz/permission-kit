@@ -1,4 +1,4 @@
-# @permission-kit/vite-plugin
+# @eycraf/permission-kit-vite-plugin
 
 ## 0.0.1
 

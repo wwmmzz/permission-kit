@@ -61,13 +61,13 @@ importers:
 
   example/react-demo:
     dependencies:
-      '@permission-kit/core':
+      '@eycraf/permission-kit-core':
         specifier: workspace:*
         version: link:../../packages/core
-      '@permission-kit/react':
+      '@eycraf/permission-kit-react':
         specifier: workspace:*
         version: link:../../packages/react
-      '@permission-kit/vite-plugin':
+      '@eycraf/permission-kit-vite-plugin':
         specifier: workspace:*
         version: link:../../packages/vite-plugin
       '@vitejs/plugin-react':
@@ -114,7 +114,7 @@ importers:
 
   packages/react:
     dependencies:
-      '@permission-kit/core':
+      '@eycraf/permission-kit-core':
         specifier: workspace:*
         version: link:../core
     devDependencies:

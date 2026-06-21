@@ -1,4 +1,4 @@
-import { Can } from '@permission-kit/react'
+import { Can } from '@eycraf/permission-kit-react'
 
 export default function App() {
   const handleAdd = () => {

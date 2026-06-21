@@ -3,7 +3,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@permission-kit/core": ["../core/src"]
+      "@eycraf/permission-kit-core": ["../core/src"]
     }
   },
   "include": ["src"]

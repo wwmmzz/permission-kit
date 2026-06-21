@@ -20,8 +20,8 @@ pnpm install
 ### 运行时权限
 
 ```tsx
-import { createPermissionChecker } from '@permission-kit/core'
-import { Can, PermissionProvider } from '@permission-kit/react'
+import { createPermissionChecker } from '@eycraf/permission-kit-core'
+import { Can, PermissionProvider } from '@eycraf/permission-kit-react'
 
 const checker = createPermissionChecker(['user.create', 'user.read'])
 
@@ -44,7 +44,7 @@ export function App() {
 
 ```ts
 import { defineConfig } from 'vite'
-import permissionPlugin from '@permission-kit/vite-plugin'
+import permissionPlugin from '@eycraf/permission-kit-vite-plugin'
 
 export default defineConfig({
   plugins: [

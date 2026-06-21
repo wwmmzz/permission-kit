@@ -3,9 +3,9 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@permission-kit/core": ["../../packages/core/src"],
-      "@permission-kit/react": ["../../packages/react/src"],
-      "@permission-kit/vite-plugin": ["../../packages/vite-plugin/src"]
+      "@eycraf/permission-kit-core": ["../../packages/core/src"],
+      "@eycraf/permission-kit-react": ["../../packages/react/src"],
+      "@eycraf/permission-kit-vite-plugin": ["../../packages/vite-plugin/src"]
     }
   },
   "include": ["src", "vite.config.ts"]

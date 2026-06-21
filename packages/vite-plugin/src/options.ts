@@ -10,7 +10,7 @@ export const PluginOptionsSchema = z.object({
 
   componentName: z.string().default('Can'),
 
-  importFrom: z.string().default('@permission-kit/react'),
+  importFrom: z.string().default('@eycraf/permission-kit-react'),
 
   /**
    * 全局 include/exclude。

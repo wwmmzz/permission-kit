@@ -1,5 +1,5 @@
 {
-  "name": "@permission-kit/react",
+  "name": "@eycraf/permission-kit-react",
   "version": "0.0.1",
   "type": "module",
   "sideEffects": [
@@ -24,6 +24,9 @@
   "files": [
     "dist"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
@@ -34,7 +37,7 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@permission-kit/core": "workspace:*"
+    "@eycraf/permission-kit-core": "workspace:*"
   },
   "peerDependencies": {
     "react": ">=18"

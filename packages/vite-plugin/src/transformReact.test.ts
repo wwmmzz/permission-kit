@@ -3,7 +3,7 @@ import { resolveOptions } from './options'
 import { transformReactPermission } from './transformReact'
 
 const options = resolveOptions({
-  importFrom: '@permission-kit/react'
+  importFrom: '@eycraf/permission-kit-react'
 })
 
 describe('transformReactPermission', () => {
@@ -13,13 +13,13 @@ describe('transformReactPermission', () => {
     const result = transformReactPermission(input, '/src/view.tsx', options)
 
     expect(result).not.toBeNull()
-    expect(result?.code).toContain(`import { Can } from '@permission-kit/react'`)
+    expect(result?.code).toContain(`import { Can } from '@eycraf/permission-kit-react'`)
     expect(result?.code).toContain('<Can permission={"user.create"} mode={"disabled"}>')
     expect(result?.code).toContain('<button>Create</button>')
   })
 
   it('removes redundant permission props inside an existing Can wrapper', () => {
-    const input = `import { Can } from '@permission-kit/react'
+    const input = `import { Can } from '@eycraf/permission-kit-react'
 const view = <Can><button permission="user.delete">Delete</button></Can>`
 
     const result = transformReactPermission(input, '/src/view.tsx', options)
