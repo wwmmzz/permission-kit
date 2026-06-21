@@ -105,7 +105,8 @@ export function transformReactPermission(
       if (permissionLiteral) {
         const usage: PermissionUsage = {
           permission: permissionLiteral,
-          file: id
+          file: id,
+          component: componentName
         }
 
         if (permissionAttr.loc?.start.line !== undefined) {
