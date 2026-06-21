@@ -13,7 +13,9 @@
       "require": "./dist/index.cjs"
     }
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
@@ -26,6 +28,7 @@
     "@babel/parser": "latest",
     "@babel/traverse": "latest",
     "@babel/types": "latest",
+    "fast-glob": "^3.3.3",
     "magic-string": "latest",
     "zod": "^3.25.0"
   },
