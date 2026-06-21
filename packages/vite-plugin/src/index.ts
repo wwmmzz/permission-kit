@@ -6,10 +6,11 @@ import fs from 'node:fs/promises'
 import { resolveOptions, type PermissionPluginOptions } from './options'
 import { PermissionState } from './state'
 import { transformReactPermission } from './transformReact'
-import { createManifestJson } from './manifest'
+import { createManifest, createManifestJson } from './manifest'
 import { createDts } from './dts'
 import { createRootFilter } from './filter'
 import { rewriteSourceFiles } from './rewrite'
+import { validatePermissionUsages } from './validate'
 
 const VIRTUAL_ID = 'virtual:permission-manifest'
 const RESOLVED_VIRTUAL_ID = '\0' + VIRTUAL_ID
@@ -76,7 +77,7 @@ export default function permissionPlugin(userOptions: PermissionPluginOptions = 
 
     load(id) {
       if (id === RESOLVED_VIRTUAL_ID) {
-        return `export default ${JSON.stringify(state.toManifest(), null, 2)}`
+        return `export default ${JSON.stringify(createManifest(state), null, 2)}`
       }
 
       return null
@@ -103,7 +104,7 @@ export default function permissionPlugin(userOptions: PermissionPluginOptions = 
 
         state.setFileUsage(id, result.usages)
 
-        validatePermissions(result.usages.map((item) => item.permission))
+        validatePermissionUsages(result.usages, options.validate, transformContext)
 
         return {
           code: result.code,
@@ -124,7 +125,7 @@ export default function permissionPlugin(userOptions: PermissionPluginOptions = 
 
       server.middlewares.use('/__permission/manifest', async (_req, res) => {
         res.setHeader('Content-Type', 'application/json')
-        res.end(JSON.stringify(state.toManifest(), null, 2))
+        res.end(JSON.stringify(createManifest(state), null, 2))
       })
     },
 
@@ -140,35 +141,9 @@ export default function permissionPlugin(userOptions: PermissionPluginOptions = 
       ctx.server.ws.send({
         type: 'custom',
         event: 'permission-manifest-update',
-        data: state.toManifest()
+        data: createManifest(state)
       })
     }
-  }
-
-  function validatePermissions(usedPermissions: string[]) {
-    if (!options.validate.enabled) {
-      return
-    }
-
-    if (options.validate.unknownPermission === 'off') {
-      return
-    }
-
-    const knownSet = new Set(options.validate.permissions)
-
-    const unknown = usedPermissions.filter((item) => !knownSet.has(item))
-
-    if (unknown.length === 0) {
-      return
-    }
-
-    const message = `[vite-plugin-permission] Unknown permissions: ${unknown.join(', ')}`
-
-    if (options.validate.unknownPermission === 'error') {
-      throw new Error(message)
-    }
-
-    transformContext?.warn(message)
   }
 }
 
