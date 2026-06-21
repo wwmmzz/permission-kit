@@ -14,7 +14,7 @@ import type { PermissionUsage } from './state'
 
 type TransformResult = {
   code: string
-  map: any
+  map: ReturnType<MagicString['generateMap']>
   usages: PermissionUsage[]
 }
 
@@ -37,7 +37,6 @@ export function transformReactPermission(
   const attrs = options.transform.attributes
   const modeAttrName = options.transform.modeAttribute
   const componentName = options.componentName
-  debugger
   const ast = parse(code, {
     sourceType: 'module',
     plugins: ['jsx', 'typescript'],
@@ -155,7 +154,19 @@ export function transformReactPermission(
   }
 
   if (wraps.length === 0) {
-    return null
+    if (removes.length === 0) {
+      return null
+    }
+
+    return {
+      code: ms.toString(),
+      map: ms.generateMap({
+        source: id,
+        includeContent: true,
+        hires: true
+      }),
+      usages
+    }
   }
 
   // 倒序修改，避免位置偏移
@@ -265,7 +276,7 @@ function getJSXName(name: JSXIdentifier | JSXMemberExpression | JSXNamespacedNam
   }
 
   if (name.type === 'JSXMemberExpression') {
-    return `${getJSXName(name.object as any)}.${getJSXName(name.property as any)}`
+    return `${getJSXName(name.object)}.${getJSXName(name.property)}`
   }
 
   return `${name.namespace.name}:${name.name.name}`

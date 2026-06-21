@@ -21,6 +21,7 @@ export default function permissionPlugin(userOptions: PermissionPluginOptions = 
   let server: ViteDevServer | undefined
   let rewriteExecuted = false
   let transformContext: { warn: (message: string) => void } | undefined
+  let transformFilter: ReturnType<typeof createRootFilter> | undefined
   const state = new PermissionState()
 
   const filter = createFilter(
@@ -34,7 +35,7 @@ export default function permissionPlugin(userOptions: PermissionPluginOptions = 
     configResolved(resolvedConfig) {
       config = resolvedConfig
 
-      createRootFilter(
+      transformFilter = createRootFilter(
         config.root,
         options.transform.include ?? options.include ?? ['src/**/*.{tsx,jsx}'],
         options.transform.exclude ??
@@ -84,7 +85,7 @@ export default function permissionPlugin(userOptions: PermissionPluginOptions = 
     async transform(code, id) {
       transformContext = this
 
-      if (!filter(id)) {
+      if (!filter(id) || !transformFilter?.(id)) {
         return null
       }
 
