@@ -14,13 +14,14 @@
     "@permission-kit/react": "workspace:*",
     "@permission-kit/vite-plugin": "workspace:*",
     "@vitejs/plugin-react": "latest",
-    "vite": "latest",
     "react": "latest",
-    "react-dom": "latest"
+    "react-dom": "latest",
+    "vite": "latest"
   },
   "devDependencies": {
     "@types/react": "latest",
     "@types/react-dom": "latest",
-    "typescript": "latest"
+    "typescript": "latest",
+    "vite-plugin-inspect": "^11.4.1"
   }
 }

@@ -1,0 +1,28 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug Vite Dev",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "--inspect-brk",
+        "${workspaceFolder}/example/react-demo/node_modules/vite/bin/vite.js",
+        "--host",
+        "0.0.0.0",
+        "--configLoader",
+        "runner"
+      ],
+      "cwd": "${workspaceFolder}/example/react-demo",
+      "console": "integratedTerminal",
+      "sourceMaps": true,
+      "resolveSourceMapLocations": [
+        "${workspaceFolder}/**",
+        "!**/node_modules/**",
+        "**/node_modules/.vite-temp/**"
+      ],
+      "skipFiles": ["<node_internals>/**"]
+    }
+  ]
+}
