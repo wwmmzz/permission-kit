@@ -9,7 +9,13 @@ const jsFiles = ['**/*.{js,cjs,mjs}']
 
 export default [
   {
-    ignores: ['**/dist/**', '**/coverage/**', '**/node_modules/**', '**/.turbo/**']
+    ignores: [
+      '**/dist/**',
+      '**/coverage/**',
+      '**/node_modules/**',
+      '**/.turbo/**',
+      '**/src/generated/**'
+    ]
   },
   {
     files: jsFiles,

@@ -3,6 +3,6 @@ dist
 coverage
 .turbo
 .pnpm-store
+**/src/generated/
 *.log
 .DS_Store
-

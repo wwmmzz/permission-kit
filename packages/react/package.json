@@ -2,15 +2,23 @@
   "name": "@permission-kit/react",
   "version": "0.0.1",
   "type": "module",
-  "sideEffects": false,
+  "sideEffects": [
+    "./src/react-augmentations.ts",
+    "./dist/index.js"
+  ],
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs"
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
     }
   },
   "files": [
@@ -19,6 +27,7 @@
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
+    "test:types": "tsd --files index.test-d.ts",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "lint": "eslint src",
