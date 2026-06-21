@@ -1,6 +1,6 @@
 {
   "name": "@eycraf/permission-kit-cli",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "type": "module",
   "bin": {
     "permission-kit": "./dist/index.js"
