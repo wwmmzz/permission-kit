@@ -1,0 +1,50 @@
+{
+  "name": "@eycraf/permission-kit-cli",
+  "version": "0.0.1",
+  "type": "module",
+  "bin": {
+    "permission-kit": "./dist/index.js"
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "lint": "eslint src",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@babel/parser": "latest",
+    "@babel/traverse": "latest",
+    "@babel/types": "latest",
+    "fast-glob": "^3.3.3"
+  },
+  "devDependencies": {
+    "@types/babel__traverse": "latest",
+    "@types/node": "latest",
+    "tsup": "latest",
+    "typescript": "latest",
+    "vitest": "latest"
+  }
+}
