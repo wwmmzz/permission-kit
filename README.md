@@ -7,6 +7,7 @@
 - `packages/core`：与框架无关的权限判断逻辑和 schema。
 - `packages/react`：React `Provider`、`Can` 组件、`usePermission` Hook 和 JSX 属性增强。
 - `packages/vite-plugin`：Vite 插件，负责权限转换、结构化 manifest、dts 生成、rewrite 和权限校验。
+- `packages/cli`：命令行工具，提供 `scan`、`validate`、`generate` 和 `doctor`。
 - `example/react-demo`：本地示例应用，用来演示完整使用流程。
 
 ## 安装
@@ -60,6 +61,15 @@ export default defineConfig({
 ```
 
 插件会在构建期输出权限清单和类型声明，并可在开发期提供权限变更信息。manifest 会记录权限、文件、行列和组件名，`dts` 会生成 `PermissionKey` 联合类型和相关辅助类型。
+
+### CLI 工具
+
+```bash
+pnpm --filter @eycraf/permission-kit-cli scan
+pnpm --filter @eycraf/permission-kit-cli validate --permissions user.create,user.delete
+pnpm --filter @eycraf/permission-kit-cli generate
+pnpm --filter @eycraf/permission-kit-cli doctor
+```
 
 ## 常用命令
 
