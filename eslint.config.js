@@ -24,6 +24,8 @@ export default [
       sourceType: 'module'
     }
   },
+
+  // 1. 通用 TypeScript 基础配置（移除了 React 相关的插件和规则）
   {
     files: tsFiles,
     languageOptions: {
@@ -37,9 +39,7 @@ export default [
       }
     },
     plugins: {
-      '@typescript-eslint': tsPlugin,
-      'react-hooks': reactHooks,
-      'react-refresh': reactRefresh
+      '@typescript-eslint': tsPlugin
     },
     rules: {
       'no-unused-vars': 'off',
@@ -52,7 +52,22 @@ export default [
           varsIgnorePattern: '^_'
         }
       ],
-      '@typescript-eslint/consistent-type-imports': 'error',
+      '@typescript-eslint/consistent-type-imports': 'error'
+    }
+  },
+
+  // 2. 🎯 【新增】React 专属配置块：精确制导，只管 React 包，放过 Vue 包！
+  {
+    // 限制仅在 packages/react 目录（以及你的 example 里的 react 示例，如果有的话）生效
+    files: [
+      'packages/react/**/*.{ts,tsx}',
+      'example/react-demo/**/*.{ts,tsx}' // 如果有 react 示例目录可以加上，没有就删掉这行
+    ],
+    plugins: {
+      'react-hooks': reactHooks,
+      'react-refresh': reactRefresh
+    },
+    rules: {
       'react-hooks/rules-of-hooks': 'error',
       'react-hooks/exhaustive-deps': 'warn',
       'react-refresh/only-export-components': [
@@ -63,5 +78,6 @@ export default [
       ]
     }
   },
+
   prettier
 ]
