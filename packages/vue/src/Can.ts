@@ -1,4 +1,4 @@
-import { cloneVNode, defineComponent, type PropType, type VNode } from 'vue'
+import { cloneVNode, createVNode, defineComponent, Fragment, type PropType, type VNode } from 'vue'
 import { normalizePermissionInput, type PermissionInput } from './provider'
 import { usePermission } from './usePermission'
 
@@ -53,6 +53,10 @@ export const Can = defineComponent({
 
 function disableVNodes(nodes: VNode[]): VNode[] {
   return nodes.map((node) => {
+    if (node.type === Fragment && Array.isArray(node.children)) {
+      return createVNode(Fragment, null, disableVNodes(node.children as VNode[]))
+    }
+
     if (typeof node.type === 'string' || typeof node.type === 'object') {
       return cloneVNode(node, {
         disabled: true,

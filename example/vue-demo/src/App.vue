@@ -10,19 +10,20 @@ const permissionsText = computed(() => {
 })
 
 function grantDeletePermission() {
-  permission.setPermissions([
-    ...new Set([...permission.permissions.value, 'user.delete']),
-  ])
+  permission.grantPermissions('user.delete')
 }
 
 function grantAdminPermission() {
-  permission.setPermissions([
-    ...new Set([...permission.permissions.value, 'system.admin']),
-  ])
+  permission.grantPermissions('system.admin')
+}
+
+function revokeDeletePermission() {
+  permission.revokePermissions('user.delete')
 }
 
 function resetPermissions() {
-  permission.setPermissions(['user.view', 'user.create'])
+  permission.clearPermissions()
+  permission.grantPermissions(['user.view', 'user.create'])
 }
 </script>
 
@@ -40,6 +41,9 @@ function resetPermissions() {
         </button>
         <button type="button" @click="grantAdminPermission">
           授予 system.admin
+        </button>
+        <button type="button" @click="revokeDeletePermission">
+          撤销 user.delete
         </button>
         <button type="button" @click="resetPermissions">
           重置权限

@@ -2,6 +2,9 @@
   "name": "@eycraf/permission-kit-vite-plugin",
   "version": "0.0.2",
   "type": "module",
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "sideEffects": false,
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
