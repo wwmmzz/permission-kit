@@ -1,6 +1,6 @@
 {
   "name": "@eycraf/permission-kit-vue",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Vue runtime bindings for permission-kit.",
   "type": "module",
   "engines": {
