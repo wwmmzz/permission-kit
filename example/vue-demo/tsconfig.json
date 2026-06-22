@@ -1,0 +1,15 @@
+{
+  "extends": "../../config/tsconfig/base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "jsx": "preserve",
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "types": ["vite/client"],
+    "paths": {
+      "@eycraf/permission-kit-core": ["../../packages/core/src"],
+      "@eycraf/permission-kit-vue": ["../../packages/vue/src"]
+    }
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue", "src/**/*.d.ts", "vite.config.ts"],
+  "references": []
+}

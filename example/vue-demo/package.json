@@ -1,0 +1,29 @@
+{
+  "name": "vue-demo",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "vue-tsc --noEmit && vite build",
+    "test": "vitest run",
+    "typecheck": "vue-tsc --noEmit",
+    "preview": "vite preview --host 0.0.0.0",
+    "clean": "rimraf dist node_modules/.vite"
+  },
+  "dependencies": {
+    "@eycraf/permission-kit-core": "workspace:*",
+    "@eycraf/permission-kit-vue": "workspace:*",
+    "@vitejs/plugin-vue": "latest",
+    "vite": "latest",
+    "vue": "latest",
+    "vue-router": "latest"
+  },
+  "devDependencies": {
+    "typescript": "latest",
+    "vue-tsc": "latest",
+    "rimraf": "latest"
+  }
+}

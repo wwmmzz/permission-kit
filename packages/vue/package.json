@@ -1,0 +1,50 @@
+{
+  "name": "@eycraf/permission-kit-vue",
+  "version": "0.0.0",
+  "description": "Vue runtime bindings for permission-kit.",
+  "type": "module",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "sideEffects": false,
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src",
+    "test": "vitest run",
+    "clean": "rimraf dist"
+  },
+  "dependencies": {
+    "@eycraf/permission-kit-core": "workspace:*"
+  },
+  "peerDependencies": {
+    "vue": ">=3.3.0"
+  },
+  "devDependencies": {
+    "@types/node": "latest",
+    "rimraf": "latest",
+    "tsup": "latest",
+    "typescript": "latest",
+    "vitest": "latest",
+    "vue": "latest"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

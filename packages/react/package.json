@@ -2,6 +2,9 @@
   "name": "@eycraf/permission-kit-react",
   "version": "0.0.1",
   "type": "module",
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "sideEffects": [
     "./src/react-augmentations.ts",
     "./dist/index.js"
