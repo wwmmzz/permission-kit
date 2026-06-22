@@ -1,4 +1,11 @@
-import { watchEffect, type Directive, type DirectiveBinding, type VNode } from 'vue'
+import {
+  effectScope,
+  watch,
+  type Directive,
+  type DirectiveBinding,
+  type EffectScope,
+  type VNode
+} from 'vue'
 import {
   PermissionContextKey,
   normalizePermissionInput,
@@ -11,6 +18,15 @@ type PermissionElement = HTMLElement & {
   __permissionOriginalDisplay?: string
   __permissionOriginalDisabled?: boolean
   __permissionStopEffect?: () => void
+  __permissionBindingState?: PermissionDirectiveBindingState
+  __permissionVNode?: VNode
+}
+
+type PermissionDirectiveBindingState = {
+  value: PermissionDirectiveValue
+  arg?: DirectiveBinding<PermissionDirectiveValue>['arg']
+  modifiers: DirectiveBinding<PermissionDirectiveValue>['modifiers']
+  instance: DirectiveBinding<PermissionDirectiveValue>['instance']
 }
 
 type DisableableElement =
@@ -24,12 +40,14 @@ export type PermissionDirectiveValue = PermissionInput
 export const permissionDirective: Directive<PermissionElement, PermissionDirectiveValue> = {
   mounted(el, binding, vnode) {
     rememberInitialState(el)
-    setupReactivePermission(el, binding, vnode)
-    applyPermission(el, binding, vnode)
+    updateDirectiveState(el, binding, vnode)
+    ensureReactivePermission(el)
   },
 
   updated(el, binding, vnode) {
-    applyPermission(el, binding, vnode)
+    updateDirectiveState(el, binding, vnode)
+    applyPermission(el)
+    ensureReactivePermission(el)
   },
 
   beforeUnmount(el) {
@@ -41,20 +59,23 @@ export const permissionDirective: Directive<PermissionElement, PermissionDirecti
   }
 }
 
-function applyPermission(
-  el: PermissionElement,
-  binding: DirectiveBinding<PermissionDirectiveValue>,
-  vnode: VNode
-) {
-  const context = getPermissionContext(vnode, binding)
+function applyPermission(el: PermissionElement) {
+  const bindingState = el.__permissionBindingState
+  const vnode = el.__permissionVNode
+
+  if (!bindingState || !vnode) {
+    return
+  }
+
+  const context = getPermissionContext(vnode, bindingState)
 
   if (!context) {
     return
   }
 
-  const permissions = normalizePermissionInput(binding.value)
-  const strategy = getStrategy(binding)
-  const mode = getMode(binding)
+  const permissions = normalizePermissionInput(bindingState.value)
+  const strategy = getStrategy(bindingState)
+  const mode = getMode(bindingState)
 
   const allowed = strategy === 'any' ? context.canAny(permissions) : context.canAll(permissions)
 
@@ -71,43 +92,99 @@ function applyPermission(
   hideElement(el)
 }
 
-function setupReactivePermission(
+function updateDirectiveState(
   el: PermissionElement,
   binding: DirectiveBinding<PermissionDirectiveValue>,
   vnode: VNode
 ) {
-  el.__permissionStopEffect?.()
+  el.__permissionBindingState = {
+    value: binding.value,
+    arg: binding.arg,
+    modifiers: binding.modifiers,
+    instance: binding.instance
+  }
+  el.__permissionVNode = vnode
+}
 
-  const context = getPermissionContext(vnode, binding)
+function ensureReactivePermission(el: PermissionElement) {
+  if (el.__permissionStopEffect) {
+    return
+  }
+
+  const bindingState = el.__permissionBindingState
+  const vnode = el.__permissionVNode
+
+  if (!bindingState || !vnode) {
+    return
+  }
+
+  const context = getPermissionContext(vnode, bindingState)
 
   if (!context) {
     return
   }
 
-  el.__permissionStopEffect = watchEffect(() => {
-    const permissions = normalizePermissionInput(binding.value)
-    const strategy = getStrategy(binding)
-    const mode = getMode(binding)
-
-    const allowed = strategy === 'any' ? context.canAny(permissions) : context.canAll(permissions)
-
-    if (allowed) {
-      restoreElement(el)
-      return
-    }
-
-    if (mode === 'disabled') {
-      disableElement(el)
-      return
-    }
-
-    hideElement(el)
+  el.__permissionStopEffect = observePermissionContext(context, () => {
+    applyPermission(el)
   })
+}
+
+type PermissionContextObserver = {
+  scope: EffectScope
+  subscribers: Set<() => void>
+}
+
+const permissionContextObservers = new WeakMap<PermissionContext, PermissionContextObserver>()
+
+function observePermissionContext(context: PermissionContext, subscriber: () => void) {
+  let observer = permissionContextObservers.get(context)
+
+  if (!observer) {
+    const subscribers = new Set<() => void>()
+    const scope = effectScope(true)
+
+    scope.run(() => {
+      watch(
+        () => context.permissions.value,
+        () => {
+          subscribers.forEach((run) => run())
+        },
+        { deep: true }
+      )
+    })
+
+    observer = {
+      scope,
+      subscribers
+    }
+
+    permissionContextObservers.set(context, observer)
+  }
+
+  observer.subscribers.add(subscriber)
+  subscriber()
+
+  return () => {
+    const current = permissionContextObservers.get(context)
+
+    if (!current) {
+      return
+    }
+
+    current.subscribers.delete(subscriber)
+
+    if (current.subscribers.size === 0) {
+      current.scope.stop()
+      permissionContextObservers.delete(context)
+    }
+  }
 }
 
 function getPermissionContext(
   vnode: VNode,
-  binding: DirectiveBinding<PermissionDirectiveValue>
+  binding: Pick<DirectiveBinding<PermissionDirectiveValue>, 'arg' | 'modifiers'> & {
+    instance?: DirectiveBinding<PermissionDirectiveValue>['instance']
+  }
 ): PermissionContext | undefined {
   const appContext = vnode.appContext ?? binding.instance?.$?.appContext
 
@@ -118,7 +195,9 @@ function getPermissionContext(
   return appContext.provides[PermissionContextKey as symbol] as PermissionContext | undefined
 }
 
-function getStrategy(binding: DirectiveBinding<PermissionDirectiveValue>): PermissionStrategy {
+function getStrategy(
+  binding: Pick<DirectiveBinding<PermissionDirectiveValue>, 'arg' | 'modifiers'>
+): PermissionStrategy {
   if (binding.arg === 'any' || binding.modifiers.any) {
     return 'any'
   }
@@ -126,7 +205,9 @@ function getStrategy(binding: DirectiveBinding<PermissionDirectiveValue>): Permi
   return 'all'
 }
 
-function getMode(binding: DirectiveBinding<PermissionDirectiveValue>): PermissionMode {
+function getMode(
+  binding: Pick<DirectiveBinding<PermissionDirectiveValue>, 'arg' | 'modifiers'>
+): PermissionMode {
   if (binding.arg === 'disabled' || binding.modifiers.disabled) {
     return 'disabled'
   }
