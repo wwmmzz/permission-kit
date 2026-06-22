@@ -1,4 +1,4 @@
-import type { Directive, DirectiveBinding, VNode } from 'vue'
+import { watchEffect, type Directive, type DirectiveBinding, type VNode } from 'vue'
 import {
   PermissionContextKey,
   normalizePermissionInput,
@@ -10,13 +10,21 @@ import type { PermissionMode, PermissionStrategy } from './Can'
 type PermissionElement = HTMLElement & {
   __permissionOriginalDisplay?: string
   __permissionOriginalDisabled?: boolean
+  __permissionStopEffect?: () => void
 }
+
+type DisableableElement =
+  | HTMLButtonElement
+  | HTMLInputElement
+  | HTMLSelectElement
+  | HTMLTextAreaElement
 
 export type PermissionDirectiveValue = PermissionInput
 
 export const permissionDirective: Directive<PermissionElement, PermissionDirectiveValue> = {
   mounted(el, binding, vnode) {
     rememberInitialState(el)
+    setupReactivePermission(el, binding, vnode)
     applyPermission(el, binding, vnode)
   },
 
@@ -25,9 +33,11 @@ export const permissionDirective: Directive<PermissionElement, PermissionDirecti
   },
 
   beforeUnmount(el) {
+    el.__permissionStopEffect?.()
     restoreElement(el)
     delete el.__permissionOriginalDisplay
     delete el.__permissionOriginalDisabled
+    delete el.__permissionStopEffect
   }
 }
 
@@ -36,7 +46,7 @@ function applyPermission(
   binding: DirectiveBinding<PermissionDirectiveValue>,
   vnode: VNode
 ) {
-  const context = getPermissionContext(vnode)
+  const context = getPermissionContext(vnode, binding)
 
   if (!context) {
     return
@@ -61,8 +71,51 @@ function applyPermission(
   hideElement(el)
 }
 
-function getPermissionContext(vnode: VNode): PermissionContext | undefined {
-  return vnode.appContext.provides[PermissionContextKey as symbol] as PermissionContext | undefined
+function setupReactivePermission(
+  el: PermissionElement,
+  binding: DirectiveBinding<PermissionDirectiveValue>,
+  vnode: VNode
+) {
+  el.__permissionStopEffect?.()
+
+  const context = getPermissionContext(vnode, binding)
+
+  if (!context) {
+    return
+  }
+
+  el.__permissionStopEffect = watchEffect(() => {
+    const permissions = normalizePermissionInput(binding.value)
+    const strategy = getStrategy(binding)
+    const mode = getMode(binding)
+
+    const allowed = strategy === 'any' ? context.canAny(permissions) : context.canAll(permissions)
+
+    if (allowed) {
+      restoreElement(el)
+      return
+    }
+
+    if (mode === 'disabled') {
+      disableElement(el)
+      return
+    }
+
+    hideElement(el)
+  })
+}
+
+function getPermissionContext(
+  vnode: VNode,
+  binding: DirectiveBinding<PermissionDirectiveValue>
+): PermissionContext | undefined {
+  const appContext = vnode.appContext ?? binding.instance?.$?.appContext
+
+  if (!appContext) {
+    return undefined
+  }
+
+  return appContext.provides[PermissionContextKey as symbol] as PermissionContext | undefined
 }
 
 function getStrategy(binding: DirectiveBinding<PermissionDirectiveValue>): PermissionStrategy {
@@ -87,7 +140,9 @@ function rememberInitialState(el: PermissionElement) {
   }
 
   if (el.__permissionOriginalDisabled === undefined) {
-    el.__permissionOriginalDisabled = isDisableableElement(el) ? el.disabled : false
+    el.__permissionOriginalDisabled = isDisableableElement(el)
+      ? (el as DisableableElement).disabled
+      : false
   }
 }
 
@@ -96,20 +151,24 @@ function hideElement(el: PermissionElement) {
 }
 
 function disableElement(el: PermissionElement) {
-  el.style.display = el.__permissionOriginalDisplay ?? ''
-  el.setAttribute('aria-disabled', 'true')
+  const disableable = el as PermissionElement & DisableableElement
+
+  disableable.style.display = disableable.__permissionOriginalDisplay ?? ''
+  disableable.setAttribute('aria-disabled', 'true')
 
   if (isDisableableElement(el)) {
-    el.disabled = true
+    disableable.disabled = true
   }
 }
 
 function restoreElement(el: PermissionElement) {
-  el.style.display = el.__permissionOriginalDisplay ?? ''
-  el.removeAttribute('aria-disabled')
+  const disableable = el as PermissionElement & DisableableElement
+
+  disableable.style.display = disableable.__permissionOriginalDisplay ?? ''
+  disableable.removeAttribute('aria-disabled')
 
   if (isDisableableElement(el)) {
-    el.disabled = el.__permissionOriginalDisabled ?? false
+    disableable.disabled = disableable.__permissionOriginalDisabled ?? false
   }
 }
 

@@ -10,10 +10,11 @@ export type PermissionVuePluginOptions = {
 }
 
 export function createPermissionPlugin(options: PermissionVuePluginOptions = {}) {
-  return {
-    install(app: App) {
-      const context = createPermissionContext(options.permissions ?? [])
+  const context = createPermissionContext(options.permissions ?? [])
 
+  return {
+    context,
+    install(app: App) {
       app.provide(PermissionContextKey, context)
       app.component(options.componentName ?? 'Can', Can)
       app.directive(options.directiveName ?? 'permission', permissionDirective)

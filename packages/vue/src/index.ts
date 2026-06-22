@@ -16,3 +16,5 @@ export type { PermissionDirectiveValue } from './directive'
 
 export { createPermissionPlugin, installPermission } from './plugin'
 export type { PermissionVuePluginOptions } from './plugin'
+export { setupPermissionRouterGuard } from './router'
+export type { PermissionRouterGuardOptions } from './router'
